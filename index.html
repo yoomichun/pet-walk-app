@@ -136,4 +136,119 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
       <div class="field"><label>Time</label><input type="time" value="09:00" /></div>
     </div>
     <div class="field"><label>Staff</label><select><option>Assign staff member</option><option>Alex H.</option><option>Maria S.</option><option>Jordan T.</option></select></div>
-    <div
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="closeModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const monthLabel = document.getElementById('month-label');
+const calBody = document.getElementById('cal-body');
+const overlay = document.getElementById('overlay');
+const modalDate = document.getElementById('modal-date');
+
+const sampleEvents = {
+  "2026-05-04": [{ title: "Rex Walk", type: "walk" }],
+  "2026-05-07": [{ title: "Milo Grooming", type: "grooming" }],
+  "2026-05-12": [{ title: "Luna Boarding", type: "boarding" }],
+  "2026-05-16": [{ title: "Bella Walk", type: "walk" }],
+  "2026-05-22": [{ title: "Coco Grooming", type: "grooming" }],
+  "2026-05-28": [{ title: "Max Boarding", type: "boarding" }]
+};
+
+let currentDate = new Date(2026, 4, 1); // May 2026
+
+function formatDateKey(date) {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function renderCalendar() {
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const firstOfMonth = new Date(year, month, 1);
+  const startOffset = firstOfMonth.getDay();
+  const calendarStart = new Date(year, month, 1 - startOffset);
+  const today = new Date();
+
+  monthLabel.textContent = currentDate.toLocaleDateString('en-US', {
+    month: 'long',
+    year: 'numeric'
+  });
+
+  calBody.innerHTML = '';
+
+  for (let i = 0; i < 42; i++) {
+    const cellDate = new Date(calendarStart);
+    cellDate.setDate(calendarStart.getDate() + i);
+
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell';
+    if (cellDate.getMonth() !== month) {
+      cell.classList.add('other-month');
+    }
+    if (
+      cellDate.getDate() === today.getDate() &&
+      cellDate.getMonth() === today.getMonth() &&
+      cellDate.getFullYear() === today.getFullYear()
+    ) {
+      cell.classList.add('today');
+    }
+
+    const dayNum = document.createElement('div');
+    dayNum.className = 'day-num';
+    dayNum.textContent = cellDate.getDate();
+    cell.appendChild(dayNum);
+
+    const dateKey = formatDateKey(cellDate);
+    const events = sampleEvents[dateKey] || [];
+    events.forEach((event) => {
+      const pill = document.createElement('div');
+      pill.className = `event-pill ${event.type}`;
+      pill.textContent = event.title;
+      cell.appendChild(pill);
+    });
+
+    cell.addEventListener('click', () => openModal(dateKey));
+    calBody.appendChild(cell);
+  }
+}
+
+function changeMonth(direction) {
+  currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + direction, 1);
+  renderCalendar();
+}
+
+function goToday() {
+  currentDate = new Date(2026, 4, 1);
+  renderCalendar();
+}
+
+function openModal(dateStr) {
+  modalDate.value = dateStr || formatDateKey(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
+  overlay.classList.add('open');
+}
+
+function closeModal() {
+  overlay.classList.remove('open');
+}
+
+function selectService(el) {
+  document.querySelectorAll('.service-btn').forEach((btn) => btn.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+overlay.addEventListener('click', (e) => {
+  if (e.target === overlay) closeModal();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderCalendar();
+});
+</script>
+</body>
+</html>
