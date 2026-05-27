@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pet Walk App</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+.app { display: flex; height: 100vh; background: #111111; overflow: hidden; font-size: 12px; }
+.sidebar { width: 172px; background: #111111; color: #aaa; flex-shrink: 0; overflow-y: auto; border-right: 1px solid #222; }
+.sidebar-header { display: flex; align-items: center; gap: 7px; padding: 13px 14px; color: #fff; font-size: 12px; font-weight: 500; border-bottom: 1px solid #222; }
+.nav-item { display: flex; align-items: center; gap: 7px; padding: 6px 14px; color: #999; cursor: pointer; transition: background 0.15s; }
+.nav-item:hover { background: #1a1a1a; }
+.nav-item.parent { color: #ccc; font-weight: 500; }
+.nav-item.child { padding-left: 28px; font-size: 11px; color: #777; }
+.nav-item.child:hover { color: #bbb; background: #1a1a1a; }
+.nav-item.active { color: #0ABAB5; background: #0d1f1f; }
+.nav-icon { font-size: 13px; opacity: 0.7; }
+.main { flex: 1; background: #f5f5f5; display: flex; flex-direction: column; overflow: hidden; }
+.topbar { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; }
+.topbar-left { display: flex; align-items: center; gap: 6px; }
+#month-label { font-size: 13px; font-weight: 500; color: #111; margin-right: 2px; }
+.nav-arrows { display: flex; gap: 3px; }
+.nav-arrows button { background: none; border: 0.5px solid #ddd; border-radius: 5px; padding: 3px 7px; cursor: pointer; color: #555; font-size: 11px; line-height: 1; }
+.nav-arrows button:hover { background: #f0f0f0; }
+.tb-btn { background: none; border: 0.5px solid #ddd; border-radius: 5px; padding: 4px 10px; cursor: pointer; font-size: 11px; color: #555; white-space: nowrap; }
+.tb-btn:hover { background: #f0f0f0; }
+.tb-btn.active { background: #111; color: #fff; border-color: #111; }
+.add-btn { background: #0ABAB5; border: none; border-radius: 6px; padding: 5px 12px; color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+.add-btn:hover { background: #089e99; }
+.calendar-wrap { flex: 1; overflow: auto; padding: 12px; }
+.cal-grid { background: #fff; border-radius: 8px; border: 0.5px solid #e0e0e0; overflow: hidden; height: 100%; display: flex; flex-direction: column; }
+.cal-header { display: grid; grid-template-columns: repeat(7, 1fr); border-bottom: 0.5px solid #e0e0e0; }
+.cal-header div { text-align: center; padding: 7px 0; font-size: 10px; font-weight: 500; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
+.cal-body { flex: 1; display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(5, 1fr); }
+.cal-cell { border-right: 0.5px solid #f0f0f0; border-bottom: 0.5px solid #f0f0f0; padding: 5px; min-height: 75px; cursor: pointer; transition: background 0.1s; }
+.cal-cell:hover { background: #fafafa; }
+.cal-cell.other-month .day-num { color: #ccc; }
+.cal-cell.today .day-num { background: #111111; color: #fff; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+.day-num { font-size: 11px; color: #444; font-weight: 500; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+.event-pill { border-radius: 3px; padding: 2px 5px; font-size: 9px; font-weight: 500; margin-top: 2px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.event-pill.walk { background: #d1f0ef; color: #076b68; }
+.event-pill.boarding { background: #fac775; color: #412402; }
+.event-pill.grooming { background: #f4c0d1; color: #4b1528; }
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; align-items: center; justify-content: center; }
+.overlay.open { display: flex; }
+.modal { background: #fff; border-radius: 10px; padding: 20px; width: 360px; }
+.modal h3 { font-size: 14px; font-weight: 500; color: #111; margin-bottom: 16px; }
+.field { margin-bottom: 11px; }
+.field label { font-size: 11px; color: #666; display: block; margin-bottom: 3px; }
+.field input, .field select { width: 100%; padding: 6px 9px; border: 0.5px solid #ddd; border-radius: 5px; font-size: 12px; color: #333; background: #fff; }
+.field input:focus, .field select:focus { outline: none; border-color: #0ABAB5; }
+.service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.service-btn { border: 0.5px solid #ddd; border-radius: 5px; padding: 6px; text-align: center; cursor: pointer; font-size: 11px; color: #555; background: #fff; transition: all 0.15s; }
+.service-btn:hover, .service-btn.selected { border-color: #0ABAB5; background: #e6f9f9; color: #076b68; }
+.modal-actions { display: flex; gap: 7px; margin-top: 16px; justify-content: flex-end; }
+.btn-cancel { background: none; border: 0.5px solid #ddd; border-radius: 5px; padding: 5px 13px; cursor: pointer; font-size: 11px; color: #555; }
+.btn-save { background: #111111; border: none; border-radius: 5px; padding: 5px 13px; cursor: pointer; font-size: 11px; color: #fff; font-weight: 500; }
+.btn-save:hover { background: #333; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="sidebar">
+    <div class="sidebar-header"><i class="ti ti-paw"></i> Pet Scheduling Co.</div>
+    <div class="nav-item parent"><i class="ti ti-home nav-icon"></i> Home</div>
+    <div class="nav-item parent"><i class="ti ti-users nav-icon"></i> Clients</div>
+    <div class="nav-item child">Add New Client</div>
+    <div class="nav-item child">Documents</div>
+    <div class="nav-item child">Keys</div>
+    <div class="nav-item child">Pet List</div>
+    <div class="nav-item child">Vet List</div>
+    <div class="nav-item parent active"><i class="ti ti-calendar nav-icon"></i> Scheduling</div>
+    <div class="nav-item child active">Calendar</div>
+    <div class="nav-item child">Daily Summary</div>
+    <div class="nav-item child">Time Off</div>
+    <div class="nav-item parent"><i class="ti ti-calendar-event nav-icon"></i> My Schedule</div>
+    <div class="nav-item parent"><i class="ti ti-file-invoice nav-icon"></i> Invoicing</div>
+    <div class="nav-item child">Invoices</div>
+    <div class="nav-item child">Bulk Invoicing</div>
+    <div class="nav-item parent"><i class="ti ti-users-group nav-icon"></i> Staff</div>
+    <div class="nav-item child">Staff List</div>
+    <div class="nav-item child">Add new Staff</div>
+    <div class="nav-item child">Documents</div>
+    <div class="nav-item child">Happiness</div>
+    <div class="nav-item child">Pay Center</div>
+    <div class="nav-item parent"><i class="ti ti-check nav-icon"></i> Approvals</div>
+    <div class="nav-item parent"><i class="ti ti-mail nav-icon"></i> Messages</div>
+    <div class="nav-item parent"><i class="ti ti-tool nav-icon"></i> Services</div>
+    <div class="nav-item parent"><i class="ti ti-chart-bar nav-icon"></i> Reporting</div>
+    <div class="nav-item parent"><i class="ti ti-settings nav-icon"></i> Settings</div>
+  </div>
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div id="month-label"></div>
+        <div class="nav-arrows">
+          <button onclick="changeMonth(-1)"><i class="ti ti-chevron-left"></i></button>
+          <button onclick="changeMonth(1)"><i class="ti ti-chevron-right"></i></button>
+        </div>
+        <button class="tb-btn" onclick="goToday()">Today</button>
+        <button class="tb-btn active">Month</button>
+        <button class="tb-btn">Week</button>
+      </div>
+      <button class="add-btn" onclick="openModal()"><i class="ti ti-plus"></i> Add New</button>
+    </div>
+    <div class="calendar-wrap">
+      <div class="cal-grid">
+        <div class="cal-header">
+          <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+        </div>
+        <div class="cal-body" id="cal-body"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3>Add New Schedule</h3>
+    <div class="field"><label>Client / Pet</label><input type="text" placeholder="Search client or pet name..." /></div>
+    <div class="field">
+      <label>Service</label>
+      <div class="service-grid">
+        <div class="service-btn selected" onclick="selectService(this)">Dog Walk</div>
+        <div class="service-btn" onclick="selectService(this)">Boarding</div>
+        <div class="service-btn" onclick="selectService(this)">Grooming</div>
+        <div class="service-btn" onclick="selectService(this)">Drop-in</div>
+        <div class="service-btn" onclick="selectService(this)">Day Care</div>
+        <div class="service-btn" onclick="selectService(this)">Training</div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+      <div class="field"><label>Date</label><input type="date" id="modal-date" /></div>
+      <div class="field"><label>Time</label><input type="time" value="09:00" /></div>
+    </div>
+    <div class="field"><label>Staff</label><select><option>Assign staff member</option><option>Alex H.</option><option>Maria S.</option><option>Jordan T.</option></select></div>
+    <div
