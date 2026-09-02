@@ -59,29 +59,59 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
 .btn-cancel { background: none; border: 0.5px solid #ddd; border-radius: 5px; padding: 5px 13px; cursor: pointer; font-size: 14px; color: #555; }
 .btn-save { background: #111111; border: none; border-radius: 5px; padding: 5px 13px; cursor: pointer; font-size: 14px; color: #fff; font-weight: 500; }
 .btn-save:hover { background: #333; }
+.page { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+.page.active { display: flex; }
+.page-body { flex: 1; overflow: auto; padding: 12px; }
+.page-title { font-size: 16px; font-weight: 500; color: #111; }
+.card { background: #fff; border-radius: 8px; border: 0.5px solid #e0e0e0; padding: 14px; margin-bottom: 12px; }
+.card h4 { font-size: 16px; font-weight: 500; color: #111; margin-bottom: 10px; }
+.stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
+.stat { background: #fff; border-radius: 8px; border: 0.5px solid #e0e0e0; padding: 12px 14px; }
+.stat-label { font-size: 14px; color: #999; margin-bottom: 4px; }
+.stat-value { font-size: 24px; font-weight: 600; color: #111; }
+.stat-value.teal { color: #0ABAB5; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tbl { width: 100%; border-collapse: collapse; background: #fff; border: 0.5px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
+.tbl th { text-align: left; font-size: 14px; font-weight: 500; color: #999; text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 12px; background: #fafafa; border-bottom: 0.5px solid #e0e0e0; }
+.tbl td { font-size: 16px; color: #444; padding: 8px 12px; border-bottom: 0.5px solid #f0f0f0; }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tbody tr:hover td { background: #fafafa; }
+.tag { display: inline-block; border-radius: 3px; padding: 2px 7px; font-size: 14px; font-weight: 500; }
+.tag.walk { background: #d1f0ef; color: #076b68; }
+.tag.boarding { background: #fac775; color: #412402; }
+.tag.grooming { background: #f4c0d1; color: #4b1528; }
+.tag.paid { background: #d6f2d9; color: #1c5426; }
+.tag.unpaid { background: #fbd5d5; color: #7a1c1c; }
+.tag.draft { background: #eee; color: #666; }
+.tag.on { background: #d1f0ef; color: #076b68; }
+.tag.off { background: #eee; color: #888; }
+.avatar { width: 26px; height: 26px; border-radius: 50%; background: #0ABAB5; color: #fff; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; margin-right: 7px; vertical-align: middle; }
+.list-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 0.5px solid #f0f0f0; font-size: 16px; color: #444; }
+.list-row:last-child { border-bottom: none; }
+.muted { color: #999; font-size: 14px; }
 </style>
 </head>
 <body>
 <div class="app">
   <div class="sidebar">
     <div class="sidebar-header"><i class="ti ti-paw"></i> Pet Walk</div>
-    <div class="nav-item parent"><i class="ti ti-home nav-icon"></i> Home</div>
-    <div class="nav-item parent"><i class="ti ti-users nav-icon"></i> Clients</div>
+    <div class="nav-item parent" id="nav-home" data-page="dashboard"><i class="ti ti-home nav-icon"></i> Home</div>
+    <div class="nav-item parent" id="nav-clients"><i class="ti ti-users nav-icon"></i> Clients</div>
     <div class="nav-item child">Add New Client</div>
     <div class="nav-item child">Documents</div>
     <div class="nav-item child">Keys</div>
-    <div class="nav-item child">Pet List</div>
+    <div class="nav-item child" data-page="petlist" data-parent="nav-clients">Pet List</div>
     <div class="nav-item child">Vet List</div>
-    <div class="nav-item parent active"><i class="ti ti-calendar nav-icon"></i> Scheduling</div>
-    <div class="nav-item child active">Calendar</div>
+    <div class="nav-item parent active" id="nav-sched"><i class="ti ti-calendar nav-icon"></i> Scheduling</div>
+    <div class="nav-item child active" data-page="calendar" data-parent="nav-sched">Calendar</div>
     <div class="nav-item child">Daily Summary</div>
     <div class="nav-item child">Time Off</div>
     <div class="nav-item parent"><i class="ti ti-calendar-event nav-icon"></i> My Schedule</div>
-    <div class="nav-item parent"><i class="ti ti-file-invoice nav-icon"></i> Invoicing</div>
-    <div class="nav-item child">Invoices</div>
+    <div class="nav-item parent" id="nav-inv"><i class="ti ti-file-invoice nav-icon"></i> Invoicing</div>
+    <div class="nav-item child" data-page="invoicing" data-parent="nav-inv">Invoices</div>
     <div class="nav-item child">Bulk Invoicing</div>
-    <div class="nav-item parent"><i class="ti ti-users-group nav-icon"></i> Staff</div>
-    <div class="nav-item child">Staff List</div>
+    <div class="nav-item parent" id="nav-staff"><i class="ti ti-users-group nav-icon"></i> Staff</div>
+    <div class="nav-item child" data-page="staff" data-parent="nav-staff">Staff List</div>
     <div class="nav-item child">Add new Staff</div>
     <div class="nav-item child">Documents</div>
     <div class="nav-item child">Happiness</div>
@@ -93,6 +123,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     <div class="nav-item parent"><i class="ti ti-settings nav-icon"></i> Settings</div>
   </div>
   <div class="main">
+
+    <div class="page active" id="page-calendar">
     <div class="topbar">
       <div class="topbar-left">
         <div id="month-label"></div>
@@ -114,6 +146,124 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
         <div class="cal-body" id="cal-body"></div>
       </div>
     </div>
+    </div>
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="page" id="page-dashboard">
+      <div class="topbar">
+        <div class="topbar-left"><div class="page-title">Dashboard</div></div>
+        <button class="add-btn" onclick="openModal()"><i class="ti ti-plus"></i> Add New</button>
+      </div>
+      <div class="page-body">
+        <div class="stat-row">
+          <div class="stat"><div class="stat-label">Walks Today</div><div class="stat-value">8</div></div>
+          <div class="stat"><div class="stat-label">Active Clients</div><div class="stat-value">42</div></div>
+          <div class="stat"><div class="stat-label">Staff On Duty</div><div class="stat-value">3</div></div>
+          <div class="stat"><div class="stat-label">Unpaid Invoices</div><div class="stat-value teal">$1,240</div></div>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <h4>Today's Schedule</h4>
+            <div class="list-row"><span>09:00 &nbsp; Rex <span class="muted">(Sarah M.)</span></span><span class="tag walk">Walk</span></div>
+            <div class="list-row"><span>10:30 &nbsp; Milo <span class="muted">(Dan K.)</span></span><span class="tag grooming">Grooming</span></div>
+            <div class="list-row"><span>12:00 &nbsp; Luna <span class="muted">(Priya R.)</span></span><span class="tag boarding">Boarding</span></div>
+            <div class="list-row"><span>14:00 &nbsp; Bella <span class="muted">(Tom W.)</span></span><span class="tag walk">Walk</span></div>
+            <div class="list-row"><span>16:00 &nbsp; Max <span class="muted">(Ana L.)</span></span><span class="tag walk">Walk</span></div>
+          </div>
+          <div class="card">
+            <h4>Needs Attention</h4>
+            <div class="list-row"><span>INV-1043 overdue 12 days</span><span class="tag unpaid">Unpaid</span></div>
+            <div class="list-row"><span>Coco - vaccination record expired</span><span class="muted">Clients</span></div>
+            <div class="list-row"><span>Jordan T. time-off request</span><span class="muted">Approvals</span></div>
+            <div class="list-row"><span>2 walks unassigned Thursday</span><span class="muted">Scheduling</span></div>
+            <div class="list-row"><span>Key #14 not returned</span><span class="muted">Keys</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PET LIST ===== -->
+    <div class="page" id="page-petlist">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="page-title">Pet List</div>
+          <button class="tb-btn active">All</button>
+          <button class="tb-btn">Dogs</button>
+          <button class="tb-btn">Cats</button>
+        </div>
+        <button class="add-btn"><i class="ti ti-plus"></i> Add Pet</button>
+      </div>
+      <div class="page-body">
+        <table class="tbl">
+          <thead><tr><th>Pet</th><th>Client</th><th>Breed</th><th>Service</th><th>Staff</th><th>Phone</th></tr></thead>
+          <tbody>
+            <tr><td>Rex</td><td>Sarah M.</td><td>German Shepherd</td><td><span class="tag walk">Walk</span></td><td>Alex H.</td><td>555-0142</td></tr>
+            <tr><td>Milo</td><td>Dan K.</td><td>Poodle</td><td><span class="tag grooming">Grooming</span></td><td>Maria S.</td><td>555-0198</td></tr>
+            <tr><td>Luna</td><td>Priya R.</td><td>Labrador</td><td><span class="tag boarding">Boarding</span></td><td>Jordan T.</td><td>555-0177</td></tr>
+            <tr><td>Bella</td><td>Tom W.</td><td>Beagle</td><td><span class="tag walk">Walk</span></td><td>Alex H.</td><td>555-0123</td></tr>
+            <tr><td>Coco</td><td>Ana L.</td><td>Shih Tzu</td><td><span class="tag grooming">Grooming</span></td><td>Maria S.</td><td>555-0165</td></tr>
+            <tr><td>Max</td><td>Ana L.</td><td>Border Collie</td><td><span class="tag boarding">Boarding</span></td><td>Jordan T.</td><td>555-0165</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== INVOICING ===== -->
+    <div class="page" id="page-invoicing">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="page-title">Invoices</div>
+          <button class="tb-btn active">All</button>
+          <button class="tb-btn">Unpaid</button>
+          <button class="tb-btn">Paid</button>
+        </div>
+        <button class="add-btn"><i class="ti ti-plus"></i> New Invoice</button>
+      </div>
+      <div class="page-body">
+        <div class="stat-row">
+          <div class="stat"><div class="stat-label">Outstanding</div><div class="stat-value teal">$1,240</div></div>
+          <div class="stat"><div class="stat-label">Paid This Month</div><div class="stat-value">$3,880</div></div>
+          <div class="stat"><div class="stat-label">Overdue</div><div class="stat-value">2</div></div>
+          <div class="stat"><div class="stat-label">Drafts</div><div class="stat-value">1</div></div>
+        </div>
+        <table class="tbl">
+          <thead><tr><th>Invoice</th><th>Client</th><th>Issued</th><th>Due</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>INV-1043</td><td>Sarah M.</td><td>May 2, 2026</td><td>May 16, 2026</td><td>$420.00</td><td><span class="tag unpaid">Unpaid</span></td></tr>
+            <tr><td>INV-1044</td><td>Dan K.</td><td>May 5, 2026</td><td>May 19, 2026</td><td>$180.00</td><td><span class="tag paid">Paid</span></td></tr>
+            <tr><td>INV-1045</td><td>Priya R.</td><td>May 8, 2026</td><td>May 22, 2026</td><td>$640.00</td><td><span class="tag unpaid">Unpaid</span></td></tr>
+            <tr><td>INV-1046</td><td>Tom W.</td><td>May 12, 2026</td><td>May 26, 2026</td><td>$260.00</td><td><span class="tag paid">Paid</span></td></tr>
+            <tr><td>INV-1047</td><td>Ana L.</td><td>May 18, 2026</td><td>Jun 1, 2026</td><td>$180.00</td><td><span class="tag unpaid">Unpaid</span></td></tr>
+            <tr><td>INV-1048</td><td>Ana L.</td><td>&mdash;</td><td>&mdash;</td><td>$95.00</td><td><span class="tag draft">Draft</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== STAFF LIST ===== -->
+    <div class="page" id="page-staff">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="page-title">Staff List</div>
+          <button class="tb-btn active">All</button>
+          <button class="tb-btn">On Duty</button>
+        </div>
+        <button class="add-btn"><i class="ti ti-plus"></i> Add Staff</button>
+      </div>
+      <div class="page-body">
+        <table class="tbl">
+          <thead><tr><th>Name</th><th>Role</th><th>Status</th><th>Walks This Week</th><th>Phone</th><th>Started</th></tr></thead>
+          <tbody>
+            <tr><td><span class="avatar">A</span>Alex H.</td><td>Walker</td><td><span class="tag on">On Duty</span></td><td>18</td><td>555-0301</td><td>Jan 2025</td></tr>
+            <tr><td><span class="avatar">M</span>Maria S.</td><td>Groomer</td><td><span class="tag on">On Duty</span></td><td>9</td><td>555-0302</td><td>Mar 2024</td></tr>
+            <tr><td><span class="avatar">J</span>Jordan T.</td><td>Walker / Boarding</td><td><span class="tag on">On Duty</span></td><td>14</td><td>555-0303</td><td>Aug 2025</td></tr>
+            <tr><td><span class="avatar">P</span>Pat N.</td><td>Walker</td><td><span class="tag off">Time Off</span></td><td>0</td><td>555-0304</td><td>Feb 2026</td></tr>
+            <tr><td><span class="avatar">R</span>Riley C.</td><td>Trainer</td><td><span class="tag off">Inactive</span></td><td>0</td><td>555-0305</td><td>Nov 2023</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 </div>
 <div class="overlay" id="overlay">
@@ -244,6 +394,24 @@ function selectService(el) {
 
 overlay.addEventListener('click', (e) => {
   if (e.target === overlay) closeModal();
+});
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach((el) => el.classList.remove('active'));
+  const target = document.getElementById('page-' + page);
+  if (target) target.classList.add('active');
+
+  document.querySelectorAll('.nav-item').forEach((el) => el.classList.remove('active'));
+  const nav = document.querySelector('.nav-item[data-page="' + page + '"]');
+  if (nav) {
+    nav.classList.add('active');
+    const parent = nav.dataset.parent;
+    if (parent) document.getElementById(parent).classList.add('active');
+  }
+}
+
+document.querySelectorAll('.nav-item[data-page]').forEach((nav) => {
+  nav.addEventListener('click', () => showPage(nav.dataset.page));
 });
 
 document.addEventListener('DOMContentLoaded', () => {
