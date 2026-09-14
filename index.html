@@ -132,21 +132,39 @@ body { font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI'
 .legend-item svg { display: block; width: 8px; height: 8px; }
 .legend-item span { font-size: 11px; line-height: 14px; color: var(--text-main); }
 
-/* ---- Modal ---- */
-.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; align-items: center; justify-content: center; }
+/* ---- Add New Schedule modal (91:3440) ---- */
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; align-items: center; justify-content: center; padding: 24px; }
 .overlay.open { display: flex; }
-.modal { background: #fff; border-radius: 10px; padding: 20px; width: 360px; }
-.modal h3 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; }
-.field { margin-bottom: 11px; }
-.field label { font-size: 14px; color: var(--text-secondary); display: block; margin-bottom: 3px; }
-.field input, .field select { width: 100%; padding: 6px 9px; border: 1px solid var(--border); border-radius: 5px; font-family: inherit; font-size: 14px; color: var(--text-main); background: #fff; }
-.field input:focus, .field select:focus { outline: none; border-color: var(--tertiary); }
-.service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-.service-btn { border: 1px solid var(--border); border-radius: 5px; padding: 6px; text-align: center; cursor: pointer; font-size: 14px; color: var(--text-secondary); background: #fff; }
-.service-btn:hover, .service-btn.selected { border-color: var(--tertiary); background: var(--light-bg); color: var(--text-main); }
-.modal-actions { display: flex; gap: 7px; margin-top: 16px; justify-content: flex-end; }
-.btn-cancel { background: none; border: 1px solid var(--border); border-radius: 5px; padding: 5px 13px; cursor: pointer; font-family: inherit; font-size: 14px; color: var(--text-secondary); }
-.btn-save { background: var(--tertiary); border: none; border-radius: 5px; padding: 5px 13px; cursor: pointer; font-family: inherit; font-size: 14px; color: #fff; font-weight: 600; }
+.modal { background: #fff; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15); width: 560px; max-width: 100%; max-height: 100%; overflow: auto; }
+.modal-header { background: var(--main-dark); display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; }
+.modal-header h3 { font-size: 20px; font-weight: 600; color: #fff; }
+.modal-close { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: none; border: none; cursor: pointer; padding: 0; }
+.modal-close svg { display: block; width: 14px; height: 14px; }
+.modal-body { display: flex; flex-direction: column; gap: 20px; padding: 24px; }
+.f-row { display: flex; gap: 16px; align-items: flex-start; }
+.f-row.tight { gap: 12px; }
+.f-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.f-label { font-size: 14px; font-weight: 600; color: var(--text-secondary); }
+.f-control { background: #fff; border: 1px solid #CBD5E1; border-radius: 6px; height: 40px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; font-family: inherit; font-size: 14px; color: var(--text-main); width: 100%; cursor: pointer; }
+.f-control:focus { outline: none; border-color: var(--tertiary); }
+.f-control .lead { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.f-control .lead span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.f-control svg { display: block; flex-shrink: 0; }
+.f-avatar { width: 20px; height: 20px; border-radius: 10px; background: var(--tertiary); color: #fff; font-size: 10px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.f-avatar.pet { background: var(--secondary-contrast); }
+.f-link { font-size: 12px; color: #FF9D00; cursor: pointer; }
+.f-meta { color: var(--text-secondary); font-weight: 400; }
+.f-strong { font-weight: 600; }
+.seg { background: var(--light-bg); border-radius: 8px; padding: 2px; display: flex; gap: 2px; }
+.seg button { flex: 1 1 0; min-width: 0; padding: 8px 12px; border: none; background: none; border-radius: 6px; font-family: inherit; font-size: 14px; color: var(--tertiary); cursor: pointer; }
+.seg button.active { background: #fff; color: var(--main-dark); font-weight: 600; }
+.f-textarea { background: #fff; border: 1px solid #CBD5E1; border-radius: 6px; height: 84px; padding: 12px; font-family: inherit; font-size: 14px; color: var(--text-main); resize: none; width: 100%; }
+.f-textarea::placeholder { color: #94A3B8; }
+.f-textarea:focus { outline: none; border-color: var(--tertiary); }
+.modal-footer { border-top: 1px solid var(--border); padding-top: 16px; display: flex; align-items: center; justify-content: space-between; }
+.btn-cancel { border: 1px solid #CBD5E1; background: none; border-radius: 6px; padding: 10px 24px; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--text-secondary); cursor: pointer; }
+.btn-save { background: var(--tertiary); border: none; border-radius: 6px; padding: 10px 24px 10px 28px; display: flex; align-items: center; gap: 8px; font-family: inherit; font-size: 14px; font-weight: 600; color: #fff; cursor: pointer; }
+.btn-save svg { display: block; width: 12px; height: 12px; }
 
 /* ---- Shared page chrome for the non-calendar pages ---- */
 .topbar { background: #fff; border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
@@ -492,28 +510,87 @@ body { font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI'
 </div><!-- /app -->
 
 <div class="overlay" id="overlay">
-  <div class="modal">
-    <h3>Add New Schedule</h3>
-    <div class="field"><label>Client / Pet</label><input type="text" placeholder="Search client or pet name..." /></div>
-    <div class="field">
-      <label>Service</label>
-      <div class="service-grid">
-        <div class="service-btn selected" onclick="selectService(this)">Walk</div>
-        <div class="service-btn" onclick="selectService(this)">Boarding</div>
-        <div class="service-btn" onclick="selectService(this)">Drop-in</div>
-        <div class="service-btn" onclick="selectService(this)">Daycare</div>
-        <div class="service-btn" onclick="selectService(this)">Grooming</div>
-        <div class="service-btn" onclick="selectService(this)">Training</div>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+    <div class="modal-header">
+      <h3 id="modal-title">Add New Schedule</h3>
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.75014 5.24986L5.24986 8.75014M5.24986 5.24986L8.75014 8.75014M12.8338 7C12.8338 10.2219 10.2219 12.8338 7 12.8338C3.77808 12.8338 1.1662 10.2219 1.1662 7C1.1662 3.77808 3.77808 1.1662 7 1.1662C10.2219 1.1662 12.8338 3.77808 12.8338 7Z" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="f-row">
+        <div class="f-col">
+          <label class="f-label" for="m-pawrent">Pawrent</label>
+          <div class="f-control">
+            <span class="lead"><span class="f-avatar" id="m-pawrent-initials">SJ</span><span id="m-pawrent">Sarah Johnson</span></span>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 4.5L6 7.5L9 4.5" stroke="#555D64" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <span class="f-link">View Client Details</span>
+        </div>
+        <div class="f-col">
+          <label class="f-label" for="m-pet">Pet</label>
+          <div class="f-control">
+            <span class="lead"><span class="f-avatar pet"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.175 1.5C4.765 1.415 5.39 2.06 5.57 2.95C5.75 3.835 5.425 4.625 4.835 4.715C4.25 4.805 3.62 4.16 3.435 3.27C3.25 2.385 3.585 1.595 4.175 1.5ZM7.75 1.5C8.345 1.595 8.675 2.385 8.5 3.27C8.31 4.16 7.685 4.805 7.095 4.715C6.5 4.625 6.175 3.835 6.36 2.95C6.54 2.06 7.165 1.415 7.75 1.5ZM1.5 3.8C2.07 3.555 2.845 4 3.25 4.775C3.63 5.565 3.5 6.395 2.935 6.64C2.37 6.885 1.6 6.445 1.205 5.66C0.81 4.875 0.95 4.04 1.5 3.8ZM10.5 3.8C11.05 4.04 11.19 4.875 10.795 5.66C10.4 6.445 9.63 6.885 9.065 6.64C8.5 6.395 8.37 5.565 8.75 4.775C9.155 4 9.93 3.555 10.5 3.8ZM9.665 9.19C9.685 9.66 9.325 10.18 8.895 10.375C8 10.785 6.94 9.935 5.945 9.935C4.95 9.935 3.88 10.82 3 10.375C2.5 10.13 2.155 9.48 2.22 8.94C2.31 8.195 3.205 7.795 3.735 7.25C4.44 6.545 4.94 5.22 5.945 5.22C6.945 5.22 7.475 6.525 8.15 7.25C8.705 7.86 9.63 8.375 9.665 9.19Z" fill="#FFA726"/></svg></span><span id="m-pet">Winston (Golden Retriever)</span></span>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 4.5L6 7.5L9 4.5" stroke="#555D64" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <span class="f-link">View Pet Details</span>
+        </div>
       </div>
-    </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-      <div class="field"><label>Date</label><input type="date" id="modal-date" /></div>
-      <div class="field"><label>Time</label><input type="time" value="09:00" /></div>
-    </div>
-    <div class="field"><label>Staff</label><select><option>Assign staff member</option><option>Alex H.</option><option>Maria S.</option><option>Jordan T.</option></select></div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" onclick="closeModal()">Save</button>
+
+      <div class="f-col">
+        <label class="f-label">Service</label>
+        <div class="f-control">
+          <span class="lead"><span class="f-strong" id="m-service">Dog Walking</span><span class="f-meta" id="m-service-meta">(30 min &bull; $25.00)</span></span>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 4.5L6 7.5L9 4.5" stroke="#555D64" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+
+      <div class="f-row tight">
+        <div class="f-col">
+          <label class="f-label">Date</label>
+          <div class="f-control">
+            <span class="lead"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.66667 1.1662V3.49972M9.33333 1.1662V3.49972M1.75 5.83324H12.25M2.91667 2.33296H11.0833C11.7277 2.33296 12.25 2.85534 12.25 3.49972V11.667C12.25 12.3114 11.7277 12.8338 11.0833 12.8338H2.91667C2.27233 12.8338 1.75 12.3114 1.75 11.667V3.49972C1.75 2.85534 2.27233 2.33296 2.91667 2.33296Z" stroke="#555D64" stroke-width="2" stroke-linecap="round"/></svg><span id="m-date">Tue, Sep 15, 2026</span></span>
+          </div>
+        </div>
+        <div class="f-col">
+          <label class="f-label">Start Time</label>
+          <div class="f-control">
+            <span class="lead"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 3.49972V7L9.33352 8.16676M12.8338 7C12.8338 10.2219 10.2219 12.8338 7 12.8338C3.77808 12.8338 1.1662 10.2219 1.1662 7C1.1662 3.77808 3.77808 1.1662 7 1.1662C10.2219 1.1662 12.8338 3.77808 12.8338 7Z" stroke="#555D64" stroke-width="2" stroke-linecap="round"/></svg><span id="m-start">10:00 AM</span></span>
+          </div>
+        </div>
+        <div class="f-col">
+          <label class="f-label">End Time</label>
+          <div class="f-control">
+            <span class="lead"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 3.49972V7L9.33352 8.16676M12.8338 7C12.8338 10.2219 10.2219 12.8338 7 12.8338C3.77808 12.8338 1.1662 10.2219 1.1662 7C1.1662 3.77808 3.77808 1.1662 7 1.1662C10.2219 1.1662 12.8338 3.77808 12.8338 7Z" stroke="#555D64" stroke-width="2" stroke-linecap="round"/></svg><span id="m-end">10:30 AM</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="f-col">
+        <label class="f-label">Repeat</label>
+        <div class="seg" id="m-repeat">
+          <button class="active" onclick="selectRepeat(this)">None</button>
+          <button onclick="selectRepeat(this)">Daily</button>
+          <button onclick="selectRepeat(this)">Weekly</button>
+          <button onclick="selectRepeat(this)">Monthly</button>
+        </div>
+      </div>
+
+      <div class="f-col">
+        <label class="f-label" for="m-memo">Memo</label>
+        <textarea class="f-textarea" id="m-memo" placeholder="Add any special instructions or notes for this appointment..."></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-save" onclick="closeModal()">Save Schedule
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.9996 3L4.50015 8.4996L2.0004 5.99978" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
     </div>
   </div>
 </div>
@@ -522,7 +599,7 @@ body { font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI'
 const monthLabel = document.getElementById('month-label');
 const calBody = document.getElementById('cal-body');
 const overlay = document.getElementById('overlay');
-const modalDate = document.getElementById('modal-date');
+const modalDate = document.getElementById('m-date');
 const agendaTitle = document.getElementById('agenda-title');
 const agendaList = document.getElementById('agenda-list');
 
@@ -726,7 +803,7 @@ function renderCalendar() {
       renderView();
     });
     cell.addEventListener('dblclick', function () {
-      openModal(formatDateKey(cellDate));
+      if (cellDate.getMonth() === month) openModal(cellDate.getDate());
     });
 
     calBody.appendChild(cell);
@@ -907,8 +984,13 @@ function goToday() {
   renderView();
 }
 
-function openModal(dateStr) {
-  modalDate.value = dateStr || formatDateKey(new Date(currentDate.getFullYear(), currentDate.getMonth(), selectedDay));
+// The modal opens against whichever day is in focus, with a default 30 min slot.
+function openModal(day) {
+  const d = new Date(currentDate.getFullYear(), currentDate.getMonth(), day || selectedDay);
+  modalDate.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  const start = 600;
+  document.getElementById('m-start').textContent = clock(start);
+  document.getElementById('m-end').textContent = clock(start + 30);
   overlay.classList.add('open');
 }
 
@@ -916,9 +998,9 @@ function closeModal() {
   overlay.classList.remove('open');
 }
 
-function selectService(el) {
-  document.querySelectorAll('.service-btn').forEach(function (btn) { btn.classList.remove('selected'); });
-  el.classList.add('selected');
+function selectRepeat(el) {
+  document.querySelectorAll('#m-repeat button').forEach(function (b) { b.classList.remove('active'); });
+  el.classList.add('active');
 }
 
 // Only one nav group is open at a time: the one holding the current page.
@@ -974,6 +1056,10 @@ document.querySelectorAll('.nav-item[data-group]').forEach(function (header) {
 
 overlay.addEventListener('click', function (e) {
   if (e.target === overlay) closeModal();
+});
+
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
 });
 
 document.addEventListener('DOMContentLoaded', function () {
