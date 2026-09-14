@@ -274,9 +274,9 @@ body { font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI'
 
 /* ---- Add New Service modal (107:5484) ---- */
 .modal.svc-modal { width: 580px; padding: 32px; display: flex; flex-direction: column; gap: 24px; border-radius: 12px; box-shadow: 0 10px 12.5px rgba(0,0,0,0.1); }
-.svc-modal .svc-modal-head { display: flex; align-items: center; justify-content: space-between; }
-.svc-modal .svc-modal-head h3 { font-size: 20px; font-weight: 600; color: #1E293B; }
-.svc-modal .svc-modal-head .modal-close svg path { stroke: #555D64; }
+.svc-modal-head { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.svc-modal-head h3 { font-size: 20px; font-weight: 600; color: #1E293B; }
+.svc-modal-head .modal-close svg path { stroke: #555D64; }
 .svc-form { display: flex; flex-direction: column; gap: 20px; }
 .svc-field { display: flex; flex-direction: column; gap: 6px; }
 .svc-field > label { font-size: 16px; font-weight: 600; color: var(--text-secondary); }
@@ -309,6 +309,28 @@ body { font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI'
 .switch.on::after { transform: translateX(20px); }
 .svc-footer { border-top: 1px solid var(--border); padding-top: 16px; display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
 .btn-text { background: none; border: none; padding: 2px 4px; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--tertiary); cursor: pointer; }
+
+/* ---- Add New Category modal (107:5299) ---- */
+.modal.cat-modal { width: 580px; padding: 32px; display: flex; flex-direction: column; gap: 24px; border-radius: 12px; box-shadow: 0 10px 12.5px rgba(0,0,0,0.1); }
+.cat-body { display: flex; flex-direction: column; gap: 20px; }
+.cat-row { display: flex; align-items: center; gap: 24px; }
+.cat-row.new { gap: 12px; }
+.cat-grip, .cat-del { width: 24px; height: 24px; flex-shrink: 0; background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.cat-grip { cursor: grab; }
+.cat-grip svg, .cat-del svg { display: block; width: 24px; height: 24px; }
+.cat-del:hover svg path { fill: var(--error); }
+.cat-swatch { width: 80px; height: 42px; border: 1px solid #CBD5E1; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; flex-shrink: 0; padding: 0 8px; }
+.cat-swatch .dot { width: 20px; height: 20px; border-radius: 50%; background: #E2E8F0; flex-shrink: 0; }
+.cat-swatch svg { display: block; width: 24px; height: 24px; margin-right: -4px; }
+.cat-status { height: 42px; border: 1px solid #CBD5E1; border-radius: 6px; background: #fff; display: flex; align-items: center; gap: 8px; padding: 12px; cursor: pointer; flex-shrink: 0; }
+.cat-status svg { display: block; width: 24px; height: 24px; }
+.cat-name { flex: 1 1 0; min-width: 0; height: 42px; border: 1px solid #CBD5E1; border-radius: 6px; padding: 12px; font-family: inherit; font-size: 14px; color: var(--text-main); }
+.cat-name::placeholder { color: var(--text-main); }
+.cat-name:focus { outline: none; border-color: var(--tertiary); }
+.cat-add { background: #fff; border: 1px solid var(--tertiary); border-radius: 4px; padding: 6px 16px; display: flex; align-items: center; justify-content: center; color: var(--tertiary); cursor: pointer; flex-shrink: 0; }
+.cat-add svg { display: block; width: 16px; height: 16px; }
+.cat-divider { height: 1px; background: var(--border); width: 100%; }
+.cat-footer { border-top: 1px solid var(--border); padding-top: 16px; display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
 </style>
 </head>
 <body>
@@ -550,7 +572,7 @@ body { font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI'
         <div class="svc-header">
           <div class="svc-title">Services</div>
           <div class="svc-actions">
-            <button class="btn-ghost"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.6667 8.66667H8.66667V12.6667H7.33333V8.66667H3.33333V7.33333H7.33333V3.33333H8.66667V7.33333H12.6667V8.66667Z" fill="currentColor"/></svg> Add Category</button>
+            <button class="btn-ghost" onclick="openCategoryModal()"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.6667 8.66667H8.66667V12.6667H7.33333V8.66667H3.33333V7.33333H7.33333V3.33333H8.66667V7.33333H12.6667V8.66667Z" fill="currentColor"/></svg> Add Category</button>
             <button class="add-btn" onclick="openServiceModal()"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.6667 8.66667H8.66667V12.6667H7.33333V8.66667H3.33333V7.33333H7.33333V3.33333H8.66667V7.33333H12.6667V8.66667Z" fill="currentColor"/></svg> Add Service</button>
           </div>
         </div>
@@ -766,6 +788,88 @@ body { font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI'
       <button class="btn-text" onclick="closeServiceModal()">Cancel</button>
       <button class="btn-ghost" onclick="closeServiceModal()">Delete Service</button>
       <button class="add-btn" onclick="closeServiceModal()">Save Service</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="overlay" id="cat-overlay">
+  <div class="modal cat-modal" role="dialog" aria-modal="true" aria-labelledby="cat-modal-title">
+
+    <div class="svc-modal-head">
+      <h3 id="cat-modal-title">Add New Category</h3>
+      <button class="modal-close" onclick="closeCategoryModal()" aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.75014 5.24986L5.24986 8.75014M5.24986 5.24986L8.75014 8.75014M12.8338 7C12.8338 10.2219 10.2219 12.8338 7 12.8338C3.77808 12.8338 1.1662 10.2219 1.1662 7C1.1662 3.77808 3.77808 1.1662 7 1.1662C10.2219 1.1662 12.8338 3.77808 12.8338 7Z" stroke="#555D64" stroke-width="2" stroke-linecap="round"/></svg></button>
+    </div>
+
+    <div class="cat-body" id="cat-body">
+
+      <div class="cat-row new">
+        <button class="cat-swatch"><span class="dot"></span> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10H7Z" fill="#39374E"/></svg></button>
+        <button class="cat-status"><span class="badge inactive">Select</span> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10H7Z" fill="#39374E"/></svg></button>
+        <input class="cat-name" id="cat-new-name" type="text" placeholder="Add Name" />
+        <button class="cat-add" onclick="addCategory()" aria-label="Add category"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.6667 8.66667H8.66667V12.6667H7.33333V8.66667H3.33333V7.33333H7.33333V3.33333H8.66667V7.33333H12.6667V8.66667Z" fill="currentColor"/></svg></button>
+      </div>
+
+      <div class="cat-divider"></div>
+
+        <div class="cat-row">
+          <button class="cat-grip" aria-label="Reorder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 18C11 19.1 10.1 20 9 20C7.9 20 7 19.1 7 18C7 16.9 7.9 16 9 16C10.1 16 11 16.9 11 18ZM9 10C7.9 10 7 10.9 7 12C7 13.1 7.9 14 9 14C10.1 14 11 13.1 11 12C11 10.9 10.1 10 9 10ZM9 4C7.9 4 7 4.9 7 6C7 7.1 7.9 8 9 8C10.1 8 11 7.1 11 6C11 4.9 10.1 4 9 4ZM15 8C16.1 8 17 7.1 17 6C17 4.9 16.1 4 15 4C13.9 4 13 4.9 13 6C13 7.1 13.9 8 15 8ZM15 10C13.9 10 13 10.9 13 12C13 13.1 13.9 14 15 14C16.1 14 17 13.1 17 12C17 10.9 16.1 10 15 10ZM15 16C13.9 16 13 16.9 13 18C13 19.1 13.9 20 15 20C16.1 20 17 19.1 17 18C17 16.9 16.1 16 15 16Z" fill="#39374E"/></svg></button>
+          <button class="cat-swatch"><span class="dot" style="background:#FF0095"></span> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10H7Z" fill="#39374E"/></svg></button>
+          <button class="cat-status"><span class="badge active">Active</span> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10H7Z" fill="#39374E"/></svg></button>
+          <input class="cat-name" type="text" value="Walk" />
+          <button class="cat-del" onclick="removeCategory(this)" aria-label="Delete"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 9V19H8V9H16ZM14.5 3H9.5L8.5 4H5V6H19V4H15.5L14.5 3ZM18 7H6V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7Z" fill="#39374E"/></svg></button>
+        </div>
+        <div class="cat-row">
+          <button class="cat-grip" aria-label="Reorder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 18C11 19.1 10.1 20 9 20C7.9 20 7 19.1 7 18C7 16.9 7.9 16 9 16C10.1 16 11 16.9 11 18ZM9 10C7.9 10 7 10.9 7 12C7 13.1 7.9 14 9 14C10.1 14 11 13.1 11 12C11 10.9 10.1 10 9 10ZM9 4C7.9 4 7 4.9 7 6C7 7.1 7.9 8 9 8C10.1 8 11 7.1 11 6C11 4.9 10.1 4 9 4ZM15 8C16.1 8 17 7.1 17 6C17 4.9 16.1 4 15 4C13.9 4 13 4.9 13 6C13 7.1 13.9 8 15 8ZM15 10C13.9 10 13 10.9 13 12C13 13.1 13.9 14 15 14C16.1 14 17 13.1 17 12C17 10.9 16.1 10 15 10ZM15 16C13.9 16 13 16.9 13 18C13 19.1 13.9 20 15 20C16.1 20 17 19.1 17 18C17 16.9 16.1 16 15 16Z" fill="#39374E"/></svg></button>
+          <button class="cat-swatch"><span class="dot" style="background:#0ABAB5"></span> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10H7Z" fill="#39374E"/></svg></button>
+          <button class="cat-status"><span class="badge active">Active</span> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10H7Z" fill="#39374E"/></svg></button>
+          <input class="cat-name" type="text" value="Boarding" />
+          <button class="cat-del" onclick="removeCategory(this)" aria-label="Delete"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 9V19H8V9H16ZM14.5 3H9.5L8.5 4H5V6H19V4H15.5L14.5 3ZM18 7H6V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7Z" fill="#39374E"/></svg></button>
+        </div>
+        <div class="cat-row">
+          <button class="cat-grip" aria-label="Reorder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 18C11 19.1 10.1 20 9 20C7.9 20 7 19.1 7 18C7 16.9 7.9 16 9 16C10.1 16 11 16.9 11 18ZM9 10C7.9 10 7 10.9 7 12C7 13.1 7.9 14 9 14C10.1 14 11 13.1 11 12C11 10.9 10.1 10 9 10ZM9 4C7.9 4 7 4.9 7 6C7 7.1 7.9 8 9 8C10.1 8 11 7.1 11 6C11 4.9 10.1 4 9 4ZM15 8C16.1 8 17 7.1 17 6C17 4.9 16.1 4 15 4C13.9 4 13 4.9 13 6C13 7.1 13.9 8 15 8ZM15 10C13.9 10 13 10.9 13 12C13 13.1 13.9 14 15 14C16.1 14 17 13.1 17 12C17 10.9 16.1 10 15 10ZM15 16C13.9 16 13 16.9 13 18C13 19.1 13.9 20 15 20C16.1 20 17 19.1 17 18C17 16.9 16.1 16 15 16Z" fill="#39374E"/></svg></button>
+          <button class="cat-swatch"><span class="dot" style="background:#7E00C2"></span> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10H7Z" fill="#39374E"/></svg></button>
+          <button class="cat-status"><span class="badge active">Active</span> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10H7Z" fill="#39374E"/></svg></button>
+          <input class="cat-name" type="text" value="Drop-In" />
+          <button class="cat-del" onclick="removeCategory(this)" aria-label="Delete"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 9V19H8V9H16ZM14.5 3H9.5L8.5 4H5V6H19V4H15.5L14.5 3ZM18 7H6V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7Z" fill="#39374E"/></svg></button>
+        </div>
+        <div class="cat-row">
+          <button class="cat-grip" aria-label="Reorder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 18C11 19.1 10.1 20 9 20C7.9 20 7 19.1 7 18C7 16.9 7.9 16 9 16C10.1 16 11 16.9 11 18ZM9 10C7.9 10 7 10.9 7 12C7 13.1 7.9 14 9 14C10.1 14 11 13.1 11 12C11 10.9 10.1 10 9 10ZM9 4C7.9 4 7 4.9 7 6C7 7.1 7.9 8 9 8C10.1 8 11 7.1 11 6C11 4.9 10.1 4 9 4ZM15 8C16.1 8 17 7.1 17 6C17 4.9 16.1 4 15 4C13.9 4 13 4.9 13 6C13 7.1 13.9 8 15 8ZM15 10C13.9 10 13 10.9 13 12C13 13.1 13.9 14 15 14C16.1 14 17 13.1 17 12C17 10.9 16.1 10 15 10ZM15 16C13.9 16 13 16.9 13 18C13 19.1 13.9 20 15 20C16.1 20 17 19.1 17 18C17 16.9 16.1 16 15 16Z" fill="#39374E"/></svg></button>
+          <button class="cat-swatch"><span class="dot" style="background:#3F68D2"></span> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10H7Z" fill="#39374E"/></svg></button>
+          <button class="cat-status"><span class="badge active">Active</span> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10H7Z" fill="#39374E"/></svg></button>
+          <input class="cat-name" type="text" value="Daycare" />
+          <button class="cat-del" onclick="removeCategory(this)" aria-label="Delete"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 9V19H8V9H16ZM14.5 3H9.5L8.5 4H5V6H19V4H15.5L14.5 3ZM18 7H6V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7Z" fill="#39374E"/></svg></button>
+        </div>
+
+      <div class="cat-divider"></div>
+
+        <div class="cat-row">
+          <button class="cat-grip" aria-label="Reorder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 18C11 19.1 10.1 20 9 20C7.9 20 7 19.1 7 18C7 16.9 7.9 16 9 16C10.1 16 11 16.9 11 18ZM9 10C7.9 10 7 10.9 7 12C7 13.1 7.9 14 9 14C10.1 14 11 13.1 11 12C11 10.9 10.1 10 9 10ZM9 4C7.9 4 7 4.9 7 6C7 7.1 7.9 8 9 8C10.1 8 11 7.1 11 6C11 4.9 10.1 4 9 4ZM15 8C16.1 8 17 7.1 17 6C17 4.9 16.1 4 15 4C13.9 4 13 4.9 13 6C13 7.1 13.9 8 15 8ZM15 10C13.9 10 13 10.9 13 12C13 13.1 13.9 14 15 14C16.1 14 17 13.1 17 12C17 10.9 16.1 10 15 10ZM15 16C13.9 16 13 16.9 13 18C13 19.1 13.9 20 15 20C16.1 20 17 19.1 17 18C17 16.9 16.1 16 15 16Z" fill="#39374E"/></svg></button>
+          <button class="cat-swatch"><span class="dot"></span> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10H7Z" fill="#39374E"/></svg></button>
+          <button class="cat-status"><span class="badge inactive">Inactive</span> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10H7Z" fill="#39374E"/></svg></button>
+          <input class="cat-name" type="text" value="Grooming" />
+          <button class="cat-del" onclick="removeCategory(this)" aria-label="Delete"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 9V19H8V9H16ZM14.5 3H9.5L8.5 4H5V6H19V4H15.5L14.5 3ZM18 7H6V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7Z" fill="#39374E"/></svg></button>
+        </div>
+        <div class="cat-row">
+          <button class="cat-grip" aria-label="Reorder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 18C11 19.1 10.1 20 9 20C7.9 20 7 19.1 7 18C7 16.9 7.9 16 9 16C10.1 16 11 16.9 11 18ZM9 10C7.9 10 7 10.9 7 12C7 13.1 7.9 14 9 14C10.1 14 11 13.1 11 12C11 10.9 10.1 10 9 10ZM9 4C7.9 4 7 4.9 7 6C7 7.1 7.9 8 9 8C10.1 8 11 7.1 11 6C11 4.9 10.1 4 9 4ZM15 8C16.1 8 17 7.1 17 6C17 4.9 16.1 4 15 4C13.9 4 13 4.9 13 6C13 7.1 13.9 8 15 8ZM15 10C13.9 10 13 10.9 13 12C13 13.1 13.9 14 15 14C16.1 14 17 13.1 17 12C17 10.9 16.1 10 15 10ZM15 16C13.9 16 13 16.9 13 18C13 19.1 13.9 20 15 20C16.1 20 17 19.1 17 18C17 16.9 16.1 16 15 16Z" fill="#39374E"/></svg></button>
+          <button class="cat-swatch"><span class="dot"></span> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10H7Z" fill="#39374E"/></svg></button>
+          <button class="cat-status"><span class="badge inactive">Inactive</span> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10H7Z" fill="#39374E"/></svg></button>
+          <input class="cat-name" type="text" value="House Sitting" />
+          <button class="cat-del" onclick="removeCategory(this)" aria-label="Delete"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 9V19H8V9H16ZM14.5 3H9.5L8.5 4H5V6H19V4H15.5L14.5 3ZM18 7H6V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7Z" fill="#39374E"/></svg></button>
+        </div>
+        <div class="cat-row">
+          <button class="cat-grip" aria-label="Reorder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 18C11 19.1 10.1 20 9 20C7.9 20 7 19.1 7 18C7 16.9 7.9 16 9 16C10.1 16 11 16.9 11 18ZM9 10C7.9 10 7 10.9 7 12C7 13.1 7.9 14 9 14C10.1 14 11 13.1 11 12C11 10.9 10.1 10 9 10ZM9 4C7.9 4 7 4.9 7 6C7 7.1 7.9 8 9 8C10.1 8 11 7.1 11 6C11 4.9 10.1 4 9 4ZM15 8C16.1 8 17 7.1 17 6C17 4.9 16.1 4 15 4C13.9 4 13 4.9 13 6C13 7.1 13.9 8 15 8ZM15 10C13.9 10 13 10.9 13 12C13 13.1 13.9 14 15 14C16.1 14 17 13.1 17 12C17 10.9 16.1 10 15 10ZM15 16C13.9 16 13 16.9 13 18C13 19.1 13.9 20 15 20C16.1 20 17 19.1 17 18C17 16.9 16.1 16 15 16Z" fill="#39374E"/></svg></button>
+          <button class="cat-swatch"><span class="dot"></span> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10H7Z" fill="#39374E"/></svg></button>
+          <button class="cat-status"><span class="badge inactive">Inactive</span> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10H7Z" fill="#39374E"/></svg></button>
+          <input class="cat-name" type="text" value="Training" />
+          <button class="cat-del" onclick="removeCategory(this)" aria-label="Delete"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 9V19H8V9H16ZM14.5 3H9.5L8.5 4H5V6H19V4H15.5L14.5 3ZM18 7H6V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7Z" fill="#39374E"/></svg></button>
+        </div>
+
+    </div>
+
+    <div class="cat-footer">
+      <button class="btn-text" onclick="closeCategoryModal()">Cancel</button>
+      <button class="add-btn" onclick="closeCategoryModal()">Save Categories</button>
     </div>
 
   </div>
@@ -1268,6 +1372,35 @@ overlay.addEventListener('click', function (e) {
 
 const svcOverlay = document.getElementById('svc-overlay');
 
+const catOverlay = document.getElementById('cat-overlay');
+
+function openCategoryModal() { catOverlay.classList.add('open'); }
+function closeCategoryModal() { catOverlay.classList.remove('open'); }
+
+function removeCategory(btn) { btn.closest('.cat-row').remove(); }
+
+// New categories land at the end of the list, above the footer.
+function addCategory() {
+  const input = document.getElementById('cat-new-name');
+  const name = input.value.trim();
+  if (!name) { input.focus(); return; }
+  const template = document.querySelector('#cat-body .cat-row:not(.new)');
+  const row = template.cloneNode(true);
+  row.querySelector('.cat-name').value = name;
+  row.querySelector('.dot').style.background = '';
+  const badge = row.querySelector('.badge');
+  badge.className = 'badge inactive';
+  badge.textContent = 'Inactive';
+  document.getElementById('cat-body').appendChild(row);
+  input.value = '';
+  input.focus();
+}
+
+catOverlay.addEventListener('click', function (e) {
+  if (e.target === catOverlay) closeCategoryModal();
+});
+
+
 function openServiceModal() { svcOverlay.classList.add('open'); }
 function closeServiceModal() { svcOverlay.classList.remove('open'); }
 
@@ -1290,6 +1423,7 @@ document.addEventListener('keydown', function (e) {
   if (e.key !== 'Escape') return;
   if (overlay.classList.contains('open')) closeModal();
   if (svcOverlay.classList.contains('open')) closeServiceModal();
+  if (catOverlay.classList.contains('open')) closeCategoryModal();
 });
 
 window.addEventListener('hashchange', applyHash);
