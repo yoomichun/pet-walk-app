@@ -69,7 +69,8 @@ body { font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI'
 .dir-group { display: flex; align-items: center; gap: 4px; }
 .dir-btn { width: 34.5px; height: 28px; border: 1px solid var(--border); border-radius: 6px; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 6px; }
 .dir-btn svg { display: block; width: 16px; height: 16px; }
-.today-btn { display: inline-flex; align-items: center; justify-content: center; height: 28px; min-width: 73px; padding: 0 12px; background: var(--tertiary); border: 1px solid var(--border); border-radius: 6px; color: #fff; font-family: inherit; font-size: 14px; line-height: 1; cursor: pointer; }
+.today-btn { display: inline-flex; align-items: center; justify-content: center; height: 28px; min-width: 73px; padding: 0 12px; background: none; border: 1px solid var(--tertiary); border-radius: 6px; color: var(--tertiary); font-family: inherit; font-size: 14px; line-height: 1; cursor: pointer; }
+.today-btn.selected { background: var(--tertiary); border-color: var(--border); color: #fff; }
 .tools-right { display: flex; align-items: center; gap: 16px; }
 .view-toggle { display: flex; align-items: center; justify-content: space-between; gap: 2px; background: var(--light-bg); border-radius: 8px; padding: 2px; width: 185px; }
 .view-tab { flex: 1; display: inline-flex; align-items: center; justify-content: center; height: 27px; padding: 0 12px; border: none; background: none; border-radius: 6px; font-family: inherit; font-size: 14px; line-height: 1; color: var(--tertiary); cursor: pointer; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.05)); }
@@ -191,6 +192,7 @@ body { font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI'
 .wk-head { padding: 13px 0 8px; }
 .wk-head .wk-col-head { text-align: center; font-size: 11px; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.5px; padding: 6px 0; }
 .wk-head .wk-col-head.sel { background: var(--light-bg); border: 1px solid var(--tertiary); border-radius: 6px; color: var(--tertiary); }
+.wk-head .wk-col-head.today-hl { background: var(--tertiary); border: 1px solid var(--tertiary); border-radius: 6px; color: #fff; font-weight: 600; }
 .wk-allday { gap: 0; align-items: stretch; min-height: 48px; }
 .wk-allday .wk-gutter { font-size: 11px; color: var(--text-secondary); padding: 8px 8px 0 0; text-align: right; }
 .wk-allday .wk-ad-cell { border: 1px solid #F1F5F9; border-radius: 8px; margin: 0 2px; padding: 4px; display: flex; flex-direction: column; gap: 4px; }
@@ -599,6 +601,9 @@ function timeLabel(b, month, year) {
 let currentDate = new Date();
 currentDate.setDate(1);
 let selectedDay = new Date().getDate();
+// The Today button is a state, not just a jump: outlined until pressed, filled
+// while the calendar is focused on today, and it is what highlights today's date.
+let todayActive = false;
 
 // Calendar Bullet (77:2641) — a ring, not a filled dot: r=3.25, stroke-width=1.5.
 function bulletSVG(type) {
@@ -684,6 +689,7 @@ function renderCalendar() {
     if (cellDate.getMonth() !== month) cell.classList.add('other-month');
     if (cellDate.getMonth() === month && cellDate.getDate() === selectedDay) cell.classList.add('selected');
     if (
+      todayActive &&
       cellDate.getDate() === today.getDate() &&
       cellDate.getMonth() === today.getMonth() &&
       cellDate.getFullYear() === today.getFullYear()
@@ -713,6 +719,7 @@ function renderCalendar() {
     cell.addEventListener('click', function () {
       if (cellDate.getMonth() !== month) return;
       selectedDay = cellDate.getDate();
+      todayActive = false;
       renderView();
     });
     cell.addEventListener('dblclick', function () {
@@ -753,9 +760,13 @@ function renderWeek() {
   const allday = document.getElementById('wk-allday');
   const body = document.getElementById('wk-body');
 
+  const now = new Date();
   head.innerHTML = '<div></div>' + days.map(function (d) {
     const sel = d.getMonth() === month && d.getDate() === selectedDay;
-    return '<div class="wk-col-head' + (sel ? ' sel' : '') + '">' +
+    const isToday = todayActive && d.getDate() === now.getDate() &&
+      d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    const cls = isToday ? ' today-hl' : (sel ? ' sel' : '');
+    return '<div class="wk-col-head' + cls + '">' +
       d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase() + ' ' + d.getDate() + '</div>';
   }).join('');
 
@@ -860,10 +871,12 @@ function setView(view) {
 
 function selectDay(day) {
   selectedDay = day;
+  todayActive = false;
   renderView();
 }
 
 function renderView() {
+  document.querySelector('.today-btn').classList.toggle('selected', todayActive);
   const d = new Date(currentDate.getFullYear(), currentDate.getMonth(), selectedDay);
   monthLabel.textContent = currentView === 'day'
     ? d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
@@ -880,6 +893,7 @@ function changeMonth(direction) {
   currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + direction, 1);
   const last = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
   if (selectedDay > last) selectedDay = last;
+  todayActive = false;
   renderView();
 }
 
@@ -887,6 +901,7 @@ function goToday() {
   const now = new Date();
   currentDate = new Date(now.getFullYear(), now.getMonth(), 1);
   selectedDay = now.getDate();
+  todayActive = true;
   renderView();
 }
 
