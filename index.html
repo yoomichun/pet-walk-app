@@ -214,7 +214,9 @@ body { font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI'
 .day-allday { padding: 0 0 8px; flex-shrink: 0; }
 .day-row { display: grid; grid-template-columns: 70px 1fr; align-items: start; }
 .day-hour-label { font-size: 12px; color: var(--text-secondary); text-align: right; padding: 8px 12px 0 0; }
-.day-slot { background: #fff; border: 1px solid #ECECEC; border-left-width: 4px; border-radius: 8px; min-height: 72px; margin-bottom: 8px; padding: 4px; display: flex; align-items: stretch; gap: 8px; }
+.day-slot { background: #fff; border: 1px solid #ECECEC; border-left-width: 4px; border-radius: 8px; min-height: 72px; margin-bottom: 8px; display: flex; align-items: stretch; gap: 8px; }
+/* An hour with bookings drops the empty-slot banner - the coloured ones stand alone. */
+.day-slot.has-event { background: none; border: none; }
 .day-slot .day-event { flex: 1 1 0; max-width: 50%; }
 .day-event { border-radius: 8px; padding: 12px; border-style: solid; border-width: 1px 1px 1px 4px; display: flex; flex-direction: column; gap: 4px; cursor: pointer; min-height: 60px; }
 .day-event .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
@@ -846,7 +848,8 @@ function renderDay() {
     const inHour = timed.filter(function (b) { return Math.floor(b.start / 60) === h; });
     // One white banner runs the width of the hour; bookings sit inside it.
     html += '<div class="day-row"><div class="day-hour-label">' + (h === 12 ? 'Noon' : clock(h * 60)) + '</div>' +
-      '<div class="day-slot">' + inHour.map(dayEventHTML).join('') + '</div></div>';
+      '<div class="day-slot' + (inHour.length ? ' has-event' : '') + '">' +
+      inHour.map(dayEventHTML).join('') + '</div></div>';
   }
   document.getElementById('day-body').innerHTML = html;
 }
