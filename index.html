@@ -71,6 +71,7 @@ body { font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI'
 .dir-btn svg { display: block; width: 16px; height: 16px; }
 .today-btn { display: inline-flex; align-items: center; justify-content: center; height: 28px; min-width: 73px; padding: 0 12px; background: none; border: 1px solid var(--tertiary); border-radius: 6px; color: var(--tertiary); font-family: inherit; font-size: 14px; line-height: 1; cursor: pointer; }
 .today-btn.selected { background: var(--tertiary); border-color: var(--border); color: #fff; }
+.today-btn.hidden { display: none; }
 .tools-right { display: flex; align-items: center; gap: 16px; }
 .view-toggle { display: flex; align-items: center; justify-content: space-between; gap: 2px; background: var(--light-bg); border-radius: 8px; padding: 2px; width: 185px; }
 .view-tab { flex: 1; display: inline-flex; align-items: center; justify-content: center; height: 27px; padding: 0 12px; border: none; background: none; border-radius: 6px; font-family: inherit; font-size: 14px; line-height: 1; color: var(--tertiary); cursor: pointer; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.05)); }
@@ -191,8 +192,8 @@ body { font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI'
 .wk-head, .wk-allday { display: grid; grid-template-columns: 70px repeat(7, 1fr); flex-shrink: 0; }
 .wk-head { padding: 0 0 10px; }
 .wk-head .wk-col-head { text-align: center; font-size: 11px; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.5px; padding: 6px 0; }
-.wk-head .wk-col-head.sel { background: var(--light-bg); border: 1px solid var(--tertiary); border-radius: 6px; color: var(--tertiary); }
-.wk-head .wk-col-head.today-hl { background: var(--tertiary); border: 1px solid var(--tertiary); border-radius: 6px; color: #fff; font-weight: 600; }
+.wk-head .wk-col-head.sel { background: var(--light-bg); border: 1px solid transparent; border-radius: 6px; color: var(--text-main); font-weight: 600; }
+.wk-head .wk-col-head.today-hl { background: var(--light-bg); border: 1px solid var(--tertiary); border-radius: 6px; color: var(--tertiary); font-weight: 600; }
 .wk-allday { gap: 0; align-items: stretch; min-height: 48px; }
 .wk-allday .wk-gutter { font-size: 11px; color: var(--text-secondary); padding: 8px 8px 0 0; text-align: right; }
 .wk-allday .wk-ad-cell { border: 1px solid #F1F5F9; border-radius: 8px; margin: 0 2px; padding: 4px; display: flex; flex-direction: column; gap: 4px; }
@@ -876,7 +877,9 @@ function selectDay(day) {
 }
 
 function renderView() {
-  document.querySelector('.today-btn').classList.toggle('selected', todayActive);
+  const today = document.querySelector('.today-btn');
+  today.classList.toggle('selected', todayActive);
+  today.classList.toggle('hidden', currentView === 'day');
   const d = new Date(currentDate.getFullYear(), currentDate.getMonth(), selectedDay);
   monthLabel.textContent = currentView === 'day'
     ? d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
