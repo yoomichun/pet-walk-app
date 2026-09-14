@@ -1109,6 +1109,41 @@ function renderDay() {
 
 // ---- View switching ----
 let currentView = 'month';
+let currentPage = 'calendar';
+
+// The current screen lives in the URL hash so a refresh lands back where you
+// were, e.g. #calendar/week/2026-09-17 or #services. replaceState is used so
+// this does not fill the history with an entry per click.
+function writeHash() {
+  let h = currentPage;
+  if (currentPage === 'calendar') {
+    const d = new Date(currentDate.getFullYear(), currentDate.getMonth(), selectedDay);
+    h += '/' + currentView + '/' + formatDateKey(d);
+  }
+  history.replaceState(null, '', '#' + h);
+}
+
+function applyHash() {
+  const parts = (location.hash || '').replace(/^#\/?/, '').split('/').filter(Boolean);
+  const page = document.getElementById('page-' + parts[0]) ? parts[0] : 'calendar';
+
+  if (page === 'calendar') {
+    if (parts[2] && /^\d{4}-\d{2}-\d{2}$/.test(parts[2])) {
+      const d = new Date(parts[2] + 'T00:00:00');
+      if (!isNaN(d.getTime())) {
+        currentDate = new Date(d.getFullYear(), d.getMonth(), 1);
+        selectedDay = d.getDate();
+        const now = new Date();
+        todayActive = d.getDate() === now.getDate() && d.getMonth() === now.getMonth() &&
+          d.getFullYear() === now.getFullYear();
+      }
+    }
+    currentView = ['month', 'week', 'day'].indexOf(parts[1]) >= 0 ? parts[1] : 'month';
+  }
+
+  showPage(page);
+  if (page === 'calendar') setView(currentView);
+}
 
 function setView(view) {
   currentView = view;
@@ -1142,6 +1177,7 @@ function renderView() {
   else renderDay();
 
   if (currentView !== 'week') renderAgenda();
+  writeHash();
 }
 
 function changeMonth(direction) {
@@ -1193,6 +1229,7 @@ function toggleGroup(name) {
 }
 
 function showPage(page) {
+  currentPage = page;
   document.querySelectorAll('.page').forEach(function (el) { el.classList.remove('active'); });
   const target = document.getElementById('page-' + page);
   if (target) target.classList.add('active');
@@ -1202,15 +1239,18 @@ function showPage(page) {
     el.classList.remove('ancestor');
   });
   const nav = document.querySelector('.nav-item[data-page="' + page + '"]');
-  if (!nav) return;
-
-  nav.classList.add('active');
-  const parent = nav.dataset.parent;
-  if (parent) {
-    const parentEl = document.getElementById(parent);
-    parentEl.classList.add('ancestor');
-    setGroup(parentEl.dataset.group, true);
+  if (nav) {
+    nav.classList.add('active');
+    const parent = nav.dataset.parent;
+    if (parent) {
+      const parentEl = document.getElementById(parent);
+      parentEl.classList.add('ancestor');
+      setGroup(parentEl.dataset.group, true);
+    }
   }
+
+  if (page === 'calendar') renderView();
+  else writeHash();
 }
 
 document.querySelectorAll('.nav-item[data-page]').forEach(function (nav) {
@@ -1252,10 +1292,11 @@ document.addEventListener('keydown', function (e) {
   if (svcOverlay.classList.contains('open')) closeServiceModal();
 });
 
+window.addEventListener('hashchange', applyHash);
+
 document.addEventListener('DOMContentLoaded', function () {
-  showPage('calendar');
   renderLegend();
-  renderView();
+  applyHash();
 });
 </script>
 </body>
