@@ -52,6 +52,10 @@ body { font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI'
 .nav-item:hover { background: var(--nav-hover); }
 .nav-item.active { background: var(--secondary-contrast); color: var(--main-dark); }
 .nav-item.active:hover { background: var(--secondary-contrast); }
+.nav-group { display: none; }
+.nav-group.open { display: block; }
+.nav-item .nav-chevron { display: inline-block; transition: transform 0.15s; }
+.nav-item.open .nav-chevron { transform: rotate(90deg); }
 
 .main { flex: 1; background: #fff; display: flex; flex-direction: column; overflow: hidden; }
 .page { display: none; flex: 1; flex-direction: column; overflow: hidden; }
@@ -65,10 +69,10 @@ body { font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI'
 .dir-group { display: flex; align-items: center; gap: 4px; }
 .dir-btn { width: 34.5px; height: 28px; border: 1px solid var(--border); border-radius: 6px; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 6px; }
 .dir-btn svg { display: block; width: 16px; height: 16px; }
-.today-btn { height: 28px; padding: 6px 12px; background: var(--tertiary); border: 1px solid var(--border); border-radius: 6px; color: #fff; font-family: inherit; font-size: 14px; cursor: pointer; }
+.today-btn { display: inline-flex; align-items: center; justify-content: center; height: 28px; min-width: 73px; padding: 0 12px; background: var(--tertiary); border: 1px solid var(--border); border-radius: 6px; color: #fff; font-family: inherit; font-size: 14px; line-height: 1; cursor: pointer; }
 .tools-right { display: flex; align-items: center; gap: 16px; }
 .view-toggle { display: flex; align-items: center; justify-content: space-between; gap: 2px; background: var(--light-bg); border-radius: 8px; padding: 2px; width: 185px; }
-.view-tab { flex: 1; padding: 6px 12px; border: none; background: none; border-radius: 6px; font-family: inherit; font-size: 14px; color: var(--tertiary); cursor: pointer; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.05)); }
+.view-tab { flex: 1; display: inline-flex; align-items: center; justify-content: center; height: 27px; padding: 0 12px; border: none; background: none; border-radius: 6px; font-family: inherit; font-size: 14px; line-height: 1; color: var(--tertiary); cursor: pointer; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.05)); }
 .view-tab.active { background: #fff; color: var(--main-dark); font-weight: 600; }
 .add-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 6px 16px; background: var(--tertiary); border: none; border-radius: 4px; color: #fff; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
 .add-btn svg { display: block; width: 16px; height: 16px; }
@@ -200,30 +204,58 @@ body { font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI'
     <!-- ===== Left nav (74:427) ===== -->
     <div class="sidebar">
       <div class="nav-item" id="nav-home" data-page="dashboard"><i class="ti ti-home nav-icon"></i> Home</div>
-      <div class="nav-item" id="nav-clients"><i class="ti ti-users nav-icon"></i> Clients <i class="ti ti-chevron-down nav-chevron"></i></div>
-      <div class="nav-item child">Add New Client</div>
-      <div class="nav-item child">Documents</div>
-      <div class="nav-item child">Keys</div>
-      <div class="nav-item child" data-page="petlist" data-parent="nav-clients">Pet List</div>
-      <div class="nav-item child">Vet List</div>
-      <div class="nav-item" id="nav-sched"><i class="ti ti-calendar nav-icon"></i> Scheduling <i class="ti ti-chevron-down nav-chevron"></i></div>
-      <div class="nav-item child active" data-page="calendar" data-parent="nav-sched">Calendar</div>
-      <div class="nav-item child">Daily Summary</div>
-      <div class="nav-item child">Time Off</div>
+
+      <div class="nav-item" id="nav-clients" data-group="clients"><i class="ti ti-users nav-icon"></i> Clients <i class="ti ti-chevron-right nav-chevron"></i></div>
+      <div class="nav-group" data-group="clients">
+        <div class="nav-item child">Add New Client</div>
+        <div class="nav-item child">Documents</div>
+        <div class="nav-item child">Keys</div>
+        <div class="nav-item child" data-page="petlist" data-parent="nav-clients">Pet List</div>
+        <div class="nav-item child">Vet List</div>
+      </div>
+
+      <div class="nav-item" id="nav-sched" data-group="sched"><i class="ti ti-calendar nav-icon"></i> Scheduling <i class="ti ti-chevron-right nav-chevron"></i></div>
+      <div class="nav-group" data-group="sched">
+        <div class="nav-item child" data-page="calendar" data-parent="nav-sched">Calendar</div>
+        <div class="nav-item child">Daily Summary</div>
+        <div class="nav-item child">Time Off</div>
+      </div>
+
       <div class="nav-item"><i class="ti ti-calendar-event nav-icon"></i> My Schedule</div>
-      <div class="nav-item" id="nav-inv"><i class="ti ti-file-invoice nav-icon"></i> Invoicing <i class="ti ti-chevron-down nav-chevron"></i></div>
-      <div class="nav-item child" data-page="invoicing" data-parent="nav-inv">Invoices</div>
-      <div class="nav-item child">Bulk Invoicing</div>
-      <div class="nav-item" id="nav-staff"><i class="ti ti-users-group nav-icon"></i> Staff <i class="ti ti-chevron-down nav-chevron"></i></div>
-      <div class="nav-item child" data-page="staff" data-parent="nav-staff">Staff List</div>
-      <div class="nav-item child">Add new Staff</div>
-      <div class="nav-item child">Documents</div>
-      <div class="nav-item child">Happiness</div>
-      <div class="nav-item child">Pay Center</div>
+
+      <div class="nav-item" id="nav-inv" data-group="inv"><i class="ti ti-file-invoice nav-icon"></i> Invoicing <i class="ti ti-chevron-right nav-chevron"></i></div>
+      <div class="nav-group" data-group="inv">
+        <div class="nav-item child" data-page="invoicing" data-parent="nav-inv">Invoices</div>
+        <div class="nav-item child">Bulk Invoicing</div>
+      </div>
+
+      <div class="nav-item" id="nav-staff" data-group="staff"><i class="ti ti-users-group nav-icon"></i> Staff <i class="ti ti-chevron-right nav-chevron"></i></div>
+      <div class="nav-group" data-group="staff">
+        <div class="nav-item child" data-page="staff" data-parent="nav-staff">Staff List</div>
+        <div class="nav-item child">Add new Staff</div>
+        <div class="nav-item child">Documents</div>
+        <div class="nav-item child">Happiness</div>
+        <div class="nav-item child">Pay Center</div>
+        <div class="nav-item child">My Pay</div>
+      </div>
+
       <div class="nav-item"><i class="ti ti-check nav-icon"></i> Approvals</div>
       <div class="nav-item"><i class="ti ti-mail nav-icon"></i> Messages</div>
-      <div class="nav-item"><i class="ti ti-tool nav-icon"></i> Services <i class="ti ti-chevron-down nav-chevron"></i></div>
-      <div class="nav-item"><i class="ti ti-chart-bar nav-icon"></i> Reporting <i class="ti ti-chevron-down nav-chevron"></i></div>
+
+      <div class="nav-item" id="nav-services" data-group="services"><i class="ti ti-tool nav-icon"></i> Services <i class="ti ti-chevron-right nav-chevron"></i></div>
+      <div class="nav-group" data-group="services">
+        <div class="nav-item child">Services &amp; Holidays</div>
+        <div class="nav-item child">Package</div>
+      </div>
+
+      <div class="nav-item" id="nav-reporting" data-group="reporting"><i class="ti ti-chart-bar nav-icon"></i> Reporting <i class="ti ti-chevron-right nav-chevron"></i></div>
+      <div class="nav-group" data-group="reporting">
+        <div class="nav-item child">Financial</div>
+        <div class="nav-item child">Schedule</div>
+        <div class="nav-item child">Staff &amp; Clients</div>
+        <div class="nav-item child">Time</div>
+      </div>
+
       <div class="nav-item"><i class="ti ti-settings nav-icon"></i> Settings</div>
     </div>
 
@@ -606,6 +638,28 @@ function selectService(el) {
   el.classList.add('selected');
 }
 
+// Only one nav group is open at a time: the one holding the current page.
+function openGroup(name, exclusive) {
+  document.querySelectorAll('.nav-group').forEach(function (g) {
+    const isTarget = g.dataset.group === name;
+    if (isTarget || exclusive) g.classList.toggle('open', isTarget);
+  });
+  document.querySelectorAll('.nav-item[data-group]').forEach(function (h) {
+    const isTarget = h.dataset.group === name;
+    if (isTarget || exclusive) h.classList.toggle('open', isTarget);
+  });
+}
+
+function toggleGroup(name) {
+  const group = document.querySelector('.nav-group[data-group="' + name + '"]');
+  if (group.classList.contains('open')) {
+    group.classList.remove('open');
+    document.querySelector('.nav-item[data-group="' + name + '"]').classList.remove('open');
+  } else {
+    openGroup(name, true);
+  }
+}
+
 function showPage(page) {
   document.querySelectorAll('.page').forEach(function (el) { el.classList.remove('active'); });
   const target = document.getElementById('page-' + page);
@@ -613,10 +667,17 @@ function showPage(page) {
 
   document.querySelectorAll('.nav-item').forEach(function (el) { el.classList.remove('active'); });
   const nav = document.querySelector('.nav-item[data-page="' + page + '"]');
-  if (nav) {
-    nav.classList.add('active');
-    const parent = nav.dataset.parent;
-    if (parent) document.getElementById(parent).classList.add('active');
+  if (!nav) return;
+
+  nav.classList.add('active');
+  const parent = nav.dataset.parent;
+  if (parent) {
+    const parentEl = document.getElementById(parent);
+    parentEl.classList.add('active');
+    openGroup(parentEl.dataset.group, true);
+  } else {
+    // A top-level page (Home) - collapse every group.
+    openGroup(null, true);
   }
 }
 
@@ -624,11 +685,16 @@ document.querySelectorAll('.nav-item[data-page]').forEach(function (nav) {
   nav.addEventListener('click', function () { showPage(nav.dataset.page); });
 });
 
+document.querySelectorAll('.nav-item[data-group]').forEach(function (header) {
+  header.addEventListener('click', function () { toggleGroup(header.dataset.group); });
+});
+
 overlay.addEventListener('click', function (e) {
   if (e.target === overlay) closeModal();
 });
 
 document.addEventListener('DOMContentLoaded', function () {
+  openGroup('sched', true);
   renderLegend();
   renderCalendar();
   renderAgenda();
