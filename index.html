@@ -322,7 +322,11 @@ body { font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI'
 .cat-grip svg, .cat-del svg { display: block; width: 24px; height: 24px; }
 .cat-del:hover svg path { fill: var(--error); }
 .cat-swatch { width: 80px; height: 42px; border: 1px solid #CBD5E1; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; flex-shrink: 0; padding: 0 8px; }
+.cat-swatch { position: relative; }
 .cat-swatch .dot { width: 20px; height: 20px; border-radius: 50%; background: #E2E8F0; flex-shrink: 0; }
+/* A real colour picker sits invisibly over the swatch, so clicking it opens
+   the system colour wheel. */
+.cat-swatch input[type="color"] { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; padding: 0; margin: 0; border: none; pointer-events: none; }
 .cat-swatch svg { display: block; width: 24px; height: 24px; margin-right: -4px; }
 .cat-status { height: 42px; border: 1px solid #CBD5E1; border-radius: 6px; background: #fff; display: flex; align-items: center; gap: 8px; padding: 12px; cursor: pointer; flex-shrink: 0; }
 .cat-status svg { display: block; width: 24px; height: 24px; }
@@ -1341,22 +1345,19 @@ const catOverlay = document.getElementById('cat-overlay');
 // per-browser: another device opening the app sees the defaults below.
 const CAT_STORE = 'petwalk.categories';
 
-// The four calendar colours, each tied to the service it represents.
-const CAT_COLORS = {
-  walk:     { label: 'Walk',     color: '#FF0095' },
-  boarding: { label: 'Boarding', color: '#0ABAB5' },
-  dropin:   { label: 'Drop-in',  color: '#7E00C2' },
-  daycare:  { label: 'Daycare',  color: '#3F68D2' }
-};
+// A category's colour is a hex string the user picks, or '' for unset.
+// These are the calendar colours the defaults start from.
+const CAT_LEGACY = { walk: '#FF0095', boarding: '#0ABAB5', dropin: '#7E00C2', daycare: '#3F68D2' };
+const SWATCH_FALLBACK = '#CBD5E1';
 
 const CAT_DEFAULTS = [
-  { name: 'Walk',          color: 'walk',     status: 'active' },
-  { name: 'Boarding',      color: 'boarding', status: 'active' },
-  { name: 'Drop-In',       color: 'dropin',   status: 'active' },
-  { name: 'Daycare',       color: 'daycare',  status: 'active' },
-  { name: 'Grooming',      color: '',         status: 'inactive' },
-  { name: 'House Sitting', color: '',         status: 'inactive' },
-  { name: 'Training',      color: '',         status: 'inactive' }
+  { name: 'Walk',          color: '#FF0095', status: 'active' },
+  { name: 'Boarding',      color: '#0ABAB5', status: 'active' },
+  { name: 'Drop-In',       color: '#7E00C2', status: 'active' },
+  { name: 'Daycare',       color: '#3F68D2', status: 'active' },
+  { name: 'Grooming',      color: '',        status: 'inactive' },
+  { name: 'House Sitting', color: '',        status: 'inactive' },
+  { name: 'Training',      color: '',        status: 'inactive' }
 ];
 
 let categories = loadCategories();
@@ -1367,7 +1368,13 @@ function loadCategories() {
     const raw = localStorage.getItem(CAT_STORE);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return parsed;
+      if (Array.isArray(parsed)) {
+        // Earlier versions stored a preset key rather than a hex.
+        return parsed.map(function (c) {
+          if (c.color && CAT_LEGACY[c.color]) c.color = CAT_LEGACY[c.color];
+          return c;
+        });
+      }
     }
   } catch (e) { /* private mode or blocked storage - fall back to defaults */ }
   return CAT_DEFAULTS.map(function (c) { return Object.assign({}, c); });
@@ -1378,10 +1385,9 @@ function saveCategories() {
   catch (e) { /* nothing we can do; the page still works in memory */ }
 }
 
-function dot(colorKey) {
-  return colorKey && CAT_COLORS[colorKey]
-    ? '<span class="dot" style="background:' + CAT_COLORS[colorKey].color + '"></span>'
-    : '<span class="dot empty"></span>';
+function dot(hex) {
+  return hex ? '<span class="dot" style="background:' + hex + '"></span>'
+             : '<span class="dot empty"></span>';
 }
 
 function statusBadge(status) {
@@ -1394,16 +1400,11 @@ const CARET = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns
 const DRAG = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 18C11 19.1 10.1 20 9 20C7.9 20 7 19.1 7 18C7 16.9 7.9 16 9 16C10.1 16 11 16.9 11 18ZM9 10C7.9 10 7 10.9 7 12C7 13.1 7.9 14 9 14C10.1 14 11 13.1 11 12C11 10.9 10.1 10 9 10ZM9 4C7.9 4 7 4.9 7 6C7 7.1 7.9 8 9 8C10.1 8 11 7.1 11 6C11 4.9 10.1 4 9 4ZM15 8C16.1 8 17 7.1 17 6C17 4.9 16.1 4 15 4C13.9 4 13 4.9 13 6C13 7.1 13.9 8 15 8ZM15 10C13.9 10 13 10.9 13 12C13 13.1 13.9 14 15 14C16.1 14 17 13.1 17 12C17 10.9 16.1 10 15 10ZM15 16C13.9 16 13 16.9 13 18C13 19.1 13.9 20 15 20C16.1 20 17 19.1 17 18C17 16.9 16.1 16 15 16Z" fill="#39374E"/></svg>';
 const DELICON = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 9V19H8V9H16ZM14.5 3H9.5L8.5 4H5V6H19V4H15.5L14.5 3ZM18 7H6V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7Z" fill="#39374E"/></svg>';
 
-// Colour picker: the four calendar colours, each labelled with its service.
-function colorDD(idx, colorKey) {
-  const opts = Object.keys(CAT_COLORS).map(function (k) {
-    return '<button class="dd-opt" onclick="pickColor(' + idx + ', \'' + k + '\')">' +
-      dot(k) + CAT_COLORS[k].label + '</button>';
-  }).join('') +
-  '<button class="dd-opt" onclick="pickColor(' + idx + ', \'\')">' + dot('') + 'None</button>';
-  return '<div class="dd">' +
-    '<button class="cat-swatch" onclick="toggleDD(this)">' + dot(colorKey) + CARET + '</button>' +
-    '<div class="dd-menu">' + opts + '</div></div>';
+// Clicking the swatch opens the system colour picker.
+function colorSwatch(idx, hex) {
+  return '<label class="cat-swatch">' + dot(hex) + CARET +
+    '<input type="color" value="' + (hex || SWATCH_FALLBACK) + '" ' +
+    'oninput="previewColor(' + idx + ', this)" onchange="commitColor(' + idx + ', this.value)" /></label>';
 }
 
 function statusDD(idx, status) {
@@ -1419,7 +1420,7 @@ function statusDD(idx, status) {
 function catRow(c, idx) {
   return '<div class="cat-row">' +
     '<button class="cat-grip" aria-label="Reorder">' + DRAG + '</button>' +
-    colorDD(idx, c.color) +
+    colorSwatch(idx, c.color) +
     statusDD(idx, c.status) +
     '<input class="cat-name" type="text" value="' + String(c.name).replace(/"/g, '&quot;') +
       '" oninput="renameCategory(' + idx + ', this.value)" />' +
@@ -1438,7 +1439,7 @@ function renderCategories() {
     (active.length && inactive.length ? '<div class="cat-divider"></div>' : '') +
     inactive.join('');
 
-  document.getElementById('cat-new-color').outerHTML = colorDD(-1, newCat.color).replace('<div class="dd">', '<div class="dd" id="cat-new-color">');
+  document.getElementById('cat-new-color').innerHTML = colorSwatch(-1, newCat.color);
   document.getElementById('cat-new-status').outerHTML = statusDD(-1, newCat.status).replace('<div class="dd">', '<div class="dd" id="cat-new-status">');
 }
 
@@ -1451,10 +1452,17 @@ function toggleDD(btn) {
 }
 
 // idx -1 addresses the new-category row at the top.
-function pickColor(idx, key) {
-  if (idx === -1) newCat.color = key;
-  else { categories[idx].color = key; saveCategories(); }
-  renderCategories();
+function previewColor(idx, input) {
+  const swatchDot = input.parentElement.querySelector('.dot');
+  swatchDot.style.background = input.value;
+  swatchDot.classList.remove('empty');
+  if (idx === -1) newCat.color = input.value;
+  else categories[idx].color = input.value;
+}
+
+function commitColor(idx, hex) {
+  if (idx === -1) newCat.color = hex;
+  else { categories[idx].color = hex; saveCategories(); }
 }
 
 function pickStatus(idx, value) {
