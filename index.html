@@ -313,6 +313,8 @@ body { font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI'
 /* ---- Add New Category modal (107:5299) ---- */
 .modal.cat-modal { width: 580px; padding: 32px; display: flex; flex-direction: column; gap: 24px; border-radius: 12px; box-shadow: 0 10px 12.5px rgba(0,0,0,0.1); }
 .cat-body { display: flex; flex-direction: column; gap: 20px; }
+/* The rendered rows live in their own container, so it carries the gap too. */
+#cat-list { display: flex; flex-direction: column; gap: 20px; }
 .cat-row { display: flex; align-items: center; gap: 24px; }
 .cat-row.new { gap: 12px; }
 .cat-grip, .cat-del { width: 24px; height: 24px; flex-shrink: 0; background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; }
