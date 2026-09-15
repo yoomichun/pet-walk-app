@@ -1372,6 +1372,7 @@ function loadCategories() {
         // Earlier versions stored a preset key rather than a hex.
         return parsed.map(function (c) {
           if (c.color && CAT_LEGACY[c.color]) c.color = CAT_LEGACY[c.color];
+          c.color = c.color ? String(c.color).toUpperCase() : '';
           return c;
         });
       }
@@ -1452,15 +1453,21 @@ function toggleDD(btn) {
 }
 
 // idx -1 addresses the new-category row at the top.
+// Colours are kept as hex. Assigning to .style.background makes the browser
+// rewrite the attribute as rgb(), so set the attribute literally instead.
+function hexUp(v) { return String(v || '').toUpperCase(); }
+
 function previewColor(idx, input) {
+  const hex = hexUp(input.value);
   const swatchDot = input.parentElement.querySelector('.dot');
-  swatchDot.style.background = input.value;
+  swatchDot.setAttribute('style', 'background:' + hex);
   swatchDot.classList.remove('empty');
-  if (idx === -1) newCat.color = input.value;
-  else categories[idx].color = input.value;
+  if (idx === -1) newCat.color = hex;
+  else categories[idx].color = hex;
 }
 
-function commitColor(idx, hex) {
+function commitColor(idx, value) {
+  const hex = hexUp(value);
   if (idx === -1) newCat.color = hex;
   else { categories[idx].color = hex; saveCategories(); }
 }
